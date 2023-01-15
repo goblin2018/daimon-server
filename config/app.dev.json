@@ -1,0 +1,22 @@
+{
+  "app": {
+    "mode": "dev",
+    "host": "localhost",
+    "port": "9000",
+    "log": "debug",
+    "key": "xxxx",
+    "BlackList": []
+  },
+  "db": {
+    "ip": "localhost",
+    "port": "3306",
+    "user": "root",
+    "pass": "xy2089",
+    "name": "kanban"
+  },
+
+  "redis": {
+    "host": "localhost",
+    "port": "6379"
+  }
+}
