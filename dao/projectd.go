@@ -38,29 +38,3 @@ func (d *ProjectDao) ListAllProjects() (ps []*api.Project) {
 	d.Model(&models.Project{}).Order("created_at DESC").Find(&ps)
 	return
 }
-
-func (d *ProjectDao) GetProjectDetail(id uint) (p *api.Project, err error) {
-	p = new(api.Project)
-	d.Model(&models.Project{}).Where("id = ?", id).First(p)
-	var tgs []*api.TaskGroup
-	d.Model(&models.TaskGroup{}).Where("project_id = ?", id).Order("serial ASC").Find(&tgs)
-	var ts []*api.Task
-	d.Model(&models.Task{}).Where("project_id = ?", id).Order("task_group_id ASC, serial ASC").Find(&ts)
-
-	idx := 0
-	for _, task := range ts {
-
-		for {
-			if tgs[idx%len(tgs)].Id == task.TaskGroupId {
-				break
-			} else {
-				idx += 1
-			}
-		}
-		tgs[idx%len(tgs)].Tasks = append(tgs[idx%len(tgs)].Tasks, task)
-	}
-
-	p.TaskGroups = append(p.TaskGroups, tgs...)
-
-	return
-}

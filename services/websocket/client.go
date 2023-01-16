@@ -29,7 +29,7 @@ func (c *Client) Read() {
 			break
 		}
 		log.L.Infof("client [%s] receive message: %s", c.Id, string(message))
-		c.Message <- message
+		// c.Message <- message
 	}
 
 }
@@ -51,7 +51,7 @@ func (c *Client) Write() {
 				return
 			}
 			log.L.Infof("client [%s] write message: %s", c.Id, string(message))
-			err := c.Socket.WriteMessage(websocket.BinaryMessage, message)
+			err := c.Socket.WriteMessage(websocket.TextMessage, message)
 			if err != nil {
 				log.L.Warnf("client [%s] write message error: %s", c.Id, err)
 			}

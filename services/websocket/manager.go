@@ -73,6 +73,7 @@ func (m *WebsocketManager) toClientService() {
 	for {
 		select {
 		case data := <-m.messageChan:
+			log.L.Infof("send a message to client: %s %s", data.Id, string(data.Message))
 			if groupMap, ok := m.clients[data.Group]; ok {
 				if conn, ok := groupMap[data.Id]; ok {
 					conn.Message <- data.Message

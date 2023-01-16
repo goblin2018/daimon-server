@@ -16,14 +16,13 @@ func NewWsController() *WsController {
 }
 
 func (co WsController) RegisterRouters(en *ctx.RouterGroup) {
-	ws := en.Group("/ws")
+	ws := en.Group("/")
 	ws.GET("/connect", co.connect)
 	ws.GET("/sendtome", co.sendToClient)
 }
 
 func (co *WsController) connect(c *ctx.Context) {
-	res, err := co.s.Connect(c)
-	c.JSON(res, err)
+	co.s.Connect(c)
 }
 
 func (co *WsController) sendToClient(c *ctx.Context) {

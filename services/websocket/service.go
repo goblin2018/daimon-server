@@ -3,9 +3,10 @@ package websocket
 import (
 	"daimon/api"
 	"daimon/pkg/ctx"
-	"daimon/pkg/e"
 	"daimon/pkg/log"
+	"encoding/json"
 	"net/http"
+	"time"
 
 	uuid "github.com/satori/go.uuid"
 
@@ -28,19 +29,17 @@ func init() {
 
 // gin 处理 websocket handler
 // todo: specify a group for connection
-func (s *WsService) Connect(ctx *ctx.Context) (res *api.Message, err e.Error) {
-	res = &api.Message{}
+func (s *WsService) Connect(ctx *ctx.Context) {
 	upGrader := websocket.Upgrader{
 		// cross origin domain
-		CheckOrigin: func(r *http.Request) bool { return false },
+		CheckOrigin: func(r *http.Request) bool { return true },
 		//  sec-websocket-protocl header
 		Subprotocols: []string{ctx.GetHeader("Sec-WebSocket-Protocol")},
 	}
 
 	conn, er := upGrader.Upgrade(ctx.Writer, ctx.Request, nil)
 	if er != nil {
-		err = e.WsConnectError
-		log.L.Warnf("websocket connect error: %s", ctx.Param("channel"))
+		log.L.Warnf("websocket connect error: %s", er.Error())
 		return
 	}
 
@@ -53,9 +52,26 @@ func (s *WsService) Connect(ctx *ctx.Context) (res *api.Message, err e.Error) {
 		Message: make(chan []byte, 1024),
 	}
 	wsManager.RegisterClient(client)
-	res.Id = client.Id
-	res.Group = client.Group
-	return
+
+	go client.Read()
+	go client.Write()
+
+	go func() {
+		time.Sleep(time.Second * 1)
+		// 连接成功之后，发送 连接的id 和 group
+		type msg struct {
+			Id    string `json:"id" form:"id"`
+			Group string `json:"group" form:"group"`
+		}
+
+		message := msg{
+			Id:    client.Id,
+			Group: client.Group,
+		}
+		b, _ := json.Marshal(message)
+		wsManager.Send(client.Id, client.Group, b)
+	}()
+
 }
 
 func (s *WsService) SendToMe(ctx *ctx.Context, req *api.Message) {
