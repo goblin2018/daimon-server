@@ -12,9 +12,9 @@ func InitRouter() *ctx.Engine {
 	v1 := app.Group("/api/v1")
 	ws := app.Group("/ws/v1")
 	controllers.NewProjectController().RegisterRouters(v1)
+
+	// Todo 这里是 websocket服务的路由
 	controllers.NewWsController().RegisterRouters(ws)
-	// NewTaskGroupController().RegisterRouters(v1)
-	// NewTaskController().RegisterRouters(v1)
 
 	return app
 }

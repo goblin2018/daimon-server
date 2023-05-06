@@ -56,6 +56,7 @@ func (s *WsService) Connect(ctx *ctx.Context) {
 	go client.Read()
 	go client.Write()
 
+	// todo 这里是一个测试消息，用于测试连接成功之后，向客户端发送消息
 	go func() {
 		time.Sleep(time.Second * 1)
 		// 连接成功之后，发送 连接的id 和 group
@@ -74,6 +75,8 @@ func (s *WsService) Connect(ctx *ctx.Context) {
 
 }
 
+// 向指定的客户端发送消息
+// todo 按照需求修改消息内容
 func (s *WsService) SendToMe(ctx *ctx.Context, req *api.Message) {
 	wsManager.Send(req.Id, req.Group, []byte("this is test message"))
 

@@ -28,6 +28,7 @@ func (c *Client) Read() {
 		if err != nil || messageType == websocket.CloseMessage {
 			break
 		}
+		// todo 这里可以读取到客户端发送的消息，可以做后续的逻辑处理 如写入数据库，或者对客户端进行反馈
 		log.L.Infof("client [%s] receive message: %s", c.Id, string(message))
 		// c.Message <- message
 	}

@@ -8,3 +8,8 @@
 1. 收集日志 （文件？）
 2. 机器人运行状态
 3. 调度
+
+## 说明
+
+1. services/websocket 目录内包含 websocket 逻辑
+2. 需要修改的地方，见 todo
